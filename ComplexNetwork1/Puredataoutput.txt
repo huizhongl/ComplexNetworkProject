@@ -1,4 +1,3 @@
-Source	Destination
 USBRL	USORD
 USBRL	USSTL
 USDEC	USORD

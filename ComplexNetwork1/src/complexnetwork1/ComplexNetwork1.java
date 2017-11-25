@@ -106,6 +106,7 @@ public class ComplexNetwork1 {
         }
         for(Path pa:paths){
             if ((pa.getSource().length()==5)&&(pa.getDestination().length()==5))
+                if (!find(fpaths, pa))
                 fpaths.add(pa);
         }
         System.out.println("---------------------------");
@@ -113,7 +114,7 @@ public class ComplexNetwork1 {
             System.out.println(pa.getSource()+" ******* "+pa.getDestination());
         }
         //write on the File
-        FileWriter writer = new FileWriter("output.txt"); 
+        FileWriter writer = new FileWriter("output2.txt"); 
         for(Path pa: fpaths) {
             writer.write(pa.getSource()+"\t"+pa.getDestination()+"\n");
             }
@@ -123,6 +124,14 @@ writer.close();
         boolean test=false;
         for(Airport a:airports){
         if(a.getcName().equals(ch)) 
+            test=true;
+        }
+        return test;
+    }
+    public static boolean find(ArrayList<Path> paths,Path pa){
+        boolean test=false;
+        for(Path p:paths){
+        if((p.getSource().equals(pa.getSource())&&p.getDestination().equals(pa.getDestination()))||(p.getSource().equals(pa.getDestination())&&p.getDestination().equals(pa.getSource()))) 
             test=true;
         }
         return test;

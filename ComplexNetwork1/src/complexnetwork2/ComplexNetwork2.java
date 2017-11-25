@@ -3,7 +3,8 @@
  */
 package complexnetwork2;
 
-import complexnetwork1.*;
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -108,7 +109,8 @@ public class ComplexNetwork2 {
         //U For Define US C for Define Canada UC and CU for path between US and CA
         for(Path pa:paths){
             if ((pa.getSource().length()==5)&&(pa.getDestination().length()==5)){
-                if(((pa.getSource().charAt(0)=='U')&&(pa.getDestination().charAt(0)=='C'))||((pa.getSource().charAt(0)=='C')&&(pa.getDestination().charAt(0)=='U'))){
+                if ((pa.getSource().length()==5)&&(pa.getDestination().length()==5)&&(!find(fpaths, pa)))
+                if(((pa.getSource().charAt(0)=='C')&&(pa.getDestination().charAt(0)=='C'))){//((pa.getSource().charAt(0)=='U')&&(pa.getDestination().charAt(0)=='C'))||((pa.getSource().charAt(0)=='C')&&(pa.getDestination().charAt(0)=='U'))
                 fpaths.add(pa);
                 }
             }
@@ -118,7 +120,7 @@ public class ComplexNetwork2 {
             System.out.println(pa.getSource()+" ******* "+pa.getDestination());
         }
         //write on the File
-        FileWriter writer = new FileWriter("USCA.txt"); 
+        FileWriter writer = new FileWriter("CA2.txt"); 
         for(Path pa: fpaths) {
             writer.write(pa.getSource()+"\t"+pa.getDestination()+"\n");
             }
@@ -128,6 +130,14 @@ writer.close();
         boolean test=false;
         for(Airport a:airports){
         if(a.getcName().equals(ch)) 
+            test=true;
+        }
+        return test;
+    }
+    public static boolean find(ArrayList<Path> paths,Path pa){
+        boolean test=false;
+        for(Path p:paths){
+        if((p.getSource().equals(pa.getSource())&&p.getDestination().equals(pa.getDestination()))||(p.getSource().equals(pa.getDestination())&&p.getDestination().equals(pa.getSource()))) 
             test=true;
         }
         return test;

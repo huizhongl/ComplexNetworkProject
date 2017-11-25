@@ -1,4 +1,3 @@
-Source	Destination
 CAYGL	CAYGW
 CAYGL	CAYPX
 CAYGL	CAYUL
