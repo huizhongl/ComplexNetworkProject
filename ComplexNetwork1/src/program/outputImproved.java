@@ -6,31 +6,29 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class clusteringCoefficient {
+public class outputImproved {
 	private int numVertices;
 	private int numEdges;
 	private HashSet<String> total_vertices;
 	private int[][] adjMartrix;
-	private HashMap<String,Double> finalResult;
+//	private HashMap<String,String> finalResult;
 	private String file_path;
 	private HashMap<String, Integer> vertex_num;
-	private HashMap<Integer, String> num_vertex;
-	private double sum_Result;
+	private HashMap<Integer, String> num_vertex; 
 	
-	public clusteringCoefficient(String path) {
+	public outputImproved(String path) {
 		numVertices = 0;
 		numEdges = 0;
 		total_vertices = new HashSet<String>();
 		adjMartrix = new int[1000][1000];
-		finalResult = new HashMap<String,Double>();
+//		finalResult = new HashMap<String,String>();
 		file_path = path;
 		vertex_num = new HashMap<String, Integer>();
 		num_vertex = new HashMap<Integer, String>();
-		sum_Result = 0.0;
 	}
 	
-	public clusteringCoefficient() {
-		this("ttest.txt");
+	public outputImproved() {
+		this("output.txt");
 	}
 	
 	private void readData() {
@@ -46,9 +44,19 @@ public class clusteringCoefficient {
 				wordsArray = line.split("\\W+");
 				String left_node = wordsArray[0];
 				String right_node = wordsArray[1];
-				numEdges++;				
+				numEdges++;	
+				
+				
+				
+							
 				total_vertices.add(left_node);
 				total_vertices.add(right_node);
+				
+				if(vertex_num.containsKey(left_node) && vertex_num.containsKey(right_node) && adjMartrix[vertex_num.get(right_node)][vertex_num.get(left_node)] == 1 && adjMartrix[vertex_num.get(left_node)][vertex_num.get(right_node)] == 1 ) {
+					numEdges--;	
+				} else {
+					System.out.println(left_node + "\t" + right_node);
+				}
 				
 				if(!vertex_num.containsKey(left_node)) {
 					vertex_num.put(left_node, value);
@@ -59,6 +67,8 @@ public class clusteringCoefficient {
 					vertex_num.put(right_node, value);
 					value++;
 				}
+				
+				
 				
 				adjMartrix[vertex_num.get(right_node)][vertex_num.get(left_node)] = 1;
 				adjMartrix[vertex_num.get(left_node)][vertex_num.get(right_node)] = 1;
@@ -82,54 +92,6 @@ public class clusteringCoefficient {
 		}
 	}
 	
-	public void calculateCC() {
-		for(Integer a : vertex_num.values()) {
-			core(a);
-		}
-	}
-	
-	public void core(int a) {
-		ArrayList<Integer> neighbours = new ArrayList<Integer>();
-		double cc_value = 0.0;
-		
-		
-		
-		for(int i = 0; i < numVertices; i++) {
-			if(adjMartrix[a][i] == 1) {
-				neighbours.add(i);
-			}
-		}
-		
-		
-		int num_neighbours = neighbours.size();
-		int num_connected = 0;
-		for(int i = 0; i < num_neighbours-1; i++ ) {
-			for(int j = i + 1; j < num_neighbours; j++) {
-				if(adjMartrix[neighbours.get(i)][neighbours.get(j)] == 1) {
-					num_connected++;
-				}
-			}
-		}
-		if(num_neighbours == 1 || num_neighbours == 0) {
-			cc_value = 0.0;
-		} else {
-			cc_value = 2.0 * num_connected / (num_neighbours * (num_neighbours - 1));
-		}
-		
-		finalResult.put(num_vertex.get(a), cc_value);
-		sum_Result = sum_Result + cc_value;
-//		System.out.println(num_vertex.get(a) + ": " + cc_value);
-		
-		
-		
-		// just for test arraylist neighbours store the currect result.
-//		System.out.print(num_vertex.get(a) + ": ");
-//		for(Integer s : neighbours) {
-//			System.out.print(s + " ");
-//		}
-//		System.out.println();
-	}
-	
 	public void testData() {
 		System.out.println("total vertices is: " + numVertices);
 		System.out.println("total edges is: " + numEdges);
@@ -139,21 +101,10 @@ public class clusteringCoefficient {
 		}
 	}
 	
-	public void printResult() {
-		double average = (double)sum_Result / numVertices;
-		System.out.println("the average clustering coefficient is: " + average);
-		for(String a : finalResult.keySet()) {
-			System.out.println(a + "\t" + finalResult.get(a));
-		}
-	}
-	
-	
 	public static void main(String args[]) {
-		clusteringCoefficient cc = new clusteringCoefficient(args[0]);
-		cc.readData();
-//		cc.testData();
-		cc.calculateCC();
-		cc.printResult();		
+		outputImproved oi = new outputImproved();
+		oi.readData();
+//		oi.testData();
 	} 
 	
 }

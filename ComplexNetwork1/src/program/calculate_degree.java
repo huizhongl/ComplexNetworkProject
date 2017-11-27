@@ -97,6 +97,15 @@ public class calculate_degree {
 	}
 	
 	public void printResult() {
+		double averageDegree = 0.0;
+		int sum = 0;
+		for(Integer b : finalResult.values()) {
+			sum = sum + b;
+		}
+		averageDegree = (double) sum / numVertices;
+		
+		System.out.println("the average degree" + "\t" + averageDegree);
+		System.out.println();
 		for(String a: finalResult.keySet()) {
 			System.out.println("[" + a + "]" + "\t" + finalResult.get(a));
 		}

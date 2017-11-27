@@ -1,36 +1,46 @@
 package project;
-import java.util.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Stack;
 
-public class clusteringCoefficient {
+public class connectedComponent {
 	private int numVertices;
 	private int numEdges;
 	private HashSet<String> total_vertices;
 	private int[][] adjMartrix;
-	private HashMap<String,Double> finalResult;
+//	private HashMap<Integer,Double> finalResult;
 	private String file_path;
 	private HashMap<String, Integer> vertex_num;
 	private HashMap<Integer, String> num_vertex;
-	private double sum_Result;
+	private HashMap<Integer,Integer> color;
+	private Stack<Integer> myStack;
+	private int flag;
+	private HashMap<Integer,ArrayList<String>> result;
 	
-	public clusteringCoefficient(String path) {
+	public connectedComponent(String path) {
 		numVertices = 0;
 		numEdges = 0;
 		total_vertices = new HashSet<String>();
 		adjMartrix = new int[1000][1000];
-		finalResult = new HashMap<String,Double>();
+//		finalResult = new HashMap<Integer,Double>();
 		file_path = path;
 		vertex_num = new HashMap<String, Integer>();
 		num_vertex = new HashMap<Integer, String>();
-		sum_Result = 0.0;
+		color = new HashMap<Integer,Integer>();
+		myStack = new Stack<Integer>();
+		flag = 1;
+		result = new HashMap<Integer,ArrayList<String>>();
 	}
 	
-	public clusteringCoefficient() {
-		this("ttest.txt");
+	public connectedComponent() {
+		this("output.txt");
 	}
 	
 	private void readData() {
@@ -82,53 +92,46 @@ public class clusteringCoefficient {
 		}
 	}
 	
-	public void calculateCC() {
-		for(Integer a : vertex_num.values()) {
-			core(a);
+	public void findComponent() {
+		for(Integer s: vertex_num.values()) {
+			color.put(s, 0);
+		}
+		for(Integer s: color.keySet()) {
+			if(color.get(s) == 0) {
+				dfs(s);
+			}
 		}
 	}
 	
-	public void core(int a) {
-		ArrayList<Integer> neighbours = new ArrayList<Integer>();
-		double cc_value = 0.0;
-		
-		
-		
-		for(int i = 0; i < numVertices; i++) {
-			if(adjMartrix[a][i] == 1) {
-				neighbours.add(i);
-			}
-		}
-		
-		
-		int num_neighbours = neighbours.size();
-		int num_connected = 0;
-		for(int i = 0; i < num_neighbours-1; i++ ) {
-			for(int j = i + 1; j < num_neighbours; j++) {
-				if(adjMartrix[neighbours.get(i)][neighbours.get(j)] == 1) {
-					num_connected++;
+	private void dfs(int u) {
+		ArrayList<String> al = new ArrayList<String>();
+		color.put(u, 1);
+		al.add(num_vertex.get(u));
+		myStack.push(u);
+		while(!myStack.isEmpty()) {
+			int cur = myStack.pop();
+			for(int i=1; i <= numVertices; i++) {
+				if(adjMartrix[i][cur] == 1 || adjMartrix[cur][i] == 1) {
+					if(color.get(i) == 0) {
+						color.put(i, 1);
+						al.add(num_vertex.get(i));
+						myStack.push(i);
+					}					
 				}
-			}
+			}			
 		}
-		if(num_neighbours == 1 || num_neighbours == 0) {
-			cc_value = 0.0;
-		} else {
-			cc_value = 2.0 * num_connected / (num_neighbours * (num_neighbours - 1));
-		}
-		
-		finalResult.put(num_vertex.get(a), cc_value);
-		sum_Result = sum_Result + cc_value;
-//		System.out.println(num_vertex.get(a) + ": " + cc_value);
-		
-		
-		
-		// just for test arraylist neighbours store the currect result.
-//		System.out.print(num_vertex.get(a) + ": ");
-//		for(Integer s : neighbours) {
-//			System.out.print(s + " ");
-//		}
-//		System.out.println();
+//		Collections.sort(al);
+		result.put(flag, al);
+		flag++;
 	}
+	
+	public void printResult() {
+		for(Integer s: result.keySet()) {
+			ArrayList<String> al = result.get(s);
+			System.out.println("Component "+ s + ": " + al);
+		}
+	}
+	
 	
 	public void testData() {
 		System.out.println("total vertices is: " + numVertices);
@@ -139,21 +142,12 @@ public class clusteringCoefficient {
 		}
 	}
 	
-	public void printResult() {
-		double average = (double)sum_Result / numVertices;
-		System.out.println("the average clustering coefficient is: " + average);
-		for(String a : finalResult.keySet()) {
-			System.out.println(a + "\t" + finalResult.get(a));
-		}
-	}
-	
-	
 	public static void main(String args[]) {
-		clusteringCoefficient cc = new clusteringCoefficient(args[0]);
+		connectedComponent cc = new connectedComponent(args[0]);
 		cc.readData();
 //		cc.testData();
-		cc.calculateCC();
-		cc.printResult();		
-	} 
-	
+		cc.findComponent();
+		cc.printResult();
+		
+	}
 }

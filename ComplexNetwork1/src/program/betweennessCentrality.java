@@ -130,7 +130,7 @@ private void core(int s) {
 			}
 		}
 		
-		int maxDistance = dist[0];
+		int maxDistance = 0;
 		for(int i = 0; i < dist.length; i++) {
 			if(dist[i] != Integer.MAX_VALUE && dist[i] > maxDistance) {
 				maxDistance = dist[i];
